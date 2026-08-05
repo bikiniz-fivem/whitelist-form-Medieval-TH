@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ทีมงาน — ตรวจสอบใบสมัคร Whitelist | MEDIEVALONLINE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0b0b0c;
+    --panel:#161616;
+    --panel-2:#1f1f20;
+    --yellow:#f5c518;
+    --yellow-dim:#c9a013;
+    --yellow-glow: rgba(245,197,24,0.18);
+    --line: #333333;
+    --text: #eae6da;
+    --text-dim:#9c9890;
+    --danger:#ff5b4a;
+    --ok:#7ce07c;
+    --info:#6fb6ff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--black);
+    color:var(--text);
+    font-family:'Kanit', sans-serif;
+    line-height:1.6;
+    padding-bottom:80px;
+  }
+  .hazard-bar{ height:14px; width:100%; background: repeating-linear-gradient(135deg, var(--yellow) 0 22px, var(--black) 22px 44px); }
+  header.hero{ padding:36px 20px 26px; text-align:center; border-bottom:1px solid var(--line); }
+  .tagline{ display:inline-block; font-size:12px; letter-spacing:.35em; color:var(--yellow); border:1px solid var(--yellow-dim); padding:6px 14px; border-radius:2px; text-transform:uppercase; margin-bottom:14px; }
+  h1{ margin:0; font-weight:800; font-size:clamp(24px,4.5vw,32px); }
+  h1 span{color:var(--yellow);}
+
+  main{ max-width:1000px; margin:36px auto; padding:0 20px; }
+
+  .auth-card{ background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:32px 24px; text-align:center; max-width:520px; margin:0 auto; }
+  .discord-btn{ display:inline-flex; align-items:center; gap:10px; background:#5865F2; color:#fff; border:none; font-family:'Kanit', sans-serif; font-weight:600; font-size:15px; padding:13px 28px; border-radius:4px; cursor:pointer; text-decoration:none; }
+  .discord-btn:hover{filter:brightness(1.1);}
+  .redirect-hint{ margin-top:16px; font-size:11px; color:#5c5951; word-break:break-all; }
+  .denied{ color:var(--danger); font-size:14px; margin-top:14px; display:none; }
+  .denied.show{display:block;}
+
+  .toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .toolbar .who{ font-size:13px; color:var(--text-dim); }
+  .filter-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .filter-btn{
+    background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim);
+    padding:7px 14px; border-radius:20px; font-size:12.5px; cursor:pointer; font-family:'Kanit',sans-serif;
+  }
+  .filter-btn.active{ border-color:var(--yellow); color:var(--yellow); }
+  .refresh-btn{ background:var(--panel-2); border:1px solid var(--line); color:var(--text); padding:7px 14px; border-radius:4px; font-size:12.5px; cursor:pointer; font-family:'Kanit',sans-serif; }
+
+  .app-list{ display:flex; flex-direction:column; gap:14px; }
+  .app-card{ background:var(--panel); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .app-card-head{
+    padding:16px 20px; display:flex; justify-content:space-between; align-items:center;
+    cursor:pointer; gap:12px; flex-wrap:wrap;
+  }
+  .app-card-head .left{ display:flex; align-items:center; gap:12px; }
+  .app-card-head img{ width:32px; height:32px; border-radius:50%; }
+  .app-card-head .name{ font-weight:600; font-size:14.5px; }
+  .app-card-head .meta{ font-size:12px; color:var(--text-dim); }
+  .status-pill{ padding:6px 14px; border-radius:20px; font-weight:700; font-size:12px; border:1px solid currentColor; white-space:nowrap; }
+  .app-card-body{ display:none; padding:0 20px 20px; border-top:1px solid var(--line); }
+  .app-card-body.open{ display:block; }
+  .field{ padding:14px 0; border-bottom:1px solid var(--line); }
+  .field:last-of-type{ border-bottom:none; }
+  .field .label{ font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-dim); margin-bottom:4px; }
+  .field .value{ font-size:14px; white-space:pre-wrap; }
+  .review-row{ margin-top:16px; padding-top:16px; border-top:1px dashed var(--line); display:flex; flex-direction:column; gap:10px; }
+  select, textarea.admin-comment{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); border-radius:3px;
+    color:var(--text); padding:10px 12px; font-family:'Kanit', sans-serif; font-size:14px;
+  }
+  textarea.admin-comment{ min-height:70px; resize:vertical; }
+  .review-actions{ display:flex; gap:10px; align-items:center; }
+  .save-btn{
+    background:var(--yellow); color:#111; border:none; font-weight:700; font-size:13.5px;
+    padding:10px 22px; border-radius:3px; cursor:pointer; font-family:'Kanit',sans-serif;
+  }
+  .save-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .save-status{ font-size:12.5px; color:var(--text-dim); }
+  .empty-msg{ text-align:center; color:var(--text-dim); padding:40px 0; }
+  .loading{ text-align:center; color:var(--text-dim); font-size:13px; padding:30px 0; }
+</style>
+</head>
+<body>
+
+  <div class="hazard-bar"></div>
+  <header class="hero">
+    <span class="tagline">Staff Only</span>
+    <h1>ตรวจสอบใบสมัคร <span>Whitelist Streamer</span></h1>
+  </header>
+
+  <main>
+    <div id="authWrap">
+      <div class="auth-card" id="authCard">
+        <a href="#" id="discordLoginBtn" class="discord-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.099.246.197.373.291a.077.077 0 0 1-.006.128 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.106c.36.698.772 1.362 1.225 1.994a.077.077 0 0 0 .084.028 19.83 19.83 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.662a.06.06 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.955 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          เข้าสู่ระบบด้วย Discord
+        </a>
+        <div class="redirect-hint" id="redirectHint"></div>
+        <div class="denied" id="deniedMsg">บัญชี Discord นี้ไม่ได้อยู่ในรายชื่อทีมงาน กรุณาเข้าสู่ระบบด้วยบัญชีที่ได้รับอนุญาต</div>
+      </div>
+    </div>
+
+    <div id="panelWrap" style="display:none;">
+      <div class="toolbar">
+        <div class="who" id="whoAmI"></div>
+        <div class="filter-row" id="filterRow">
+          <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+          <button class="filter-btn" data-filter="pending">รอตรวจสอบ</button>
+          <button class="filter-btn" data-filter="approved">ผ่าน</button>
+          <button class="filter-btn" data-filter="rejected">ไม่ผ่าน</button>
+          <button class="filter-btn" data-filter="needs_revision">ต้องแก้ไข</button>
+        </div>
+        <button class="refresh-btn" id="refreshBtn">โหลดใหม่</button>
+      </div>
+
+      <div class="loading" id="loadingMsg">กำลังโหลดใบสมัคร...</div>
+      <div class="empty-msg" id="emptyMsg" style="display:none;">ยังไม่มีใบสมัครในระบบ</div>
+      <div class="app-list" id="appList"></div>
+    </div>
+  </main>
+
+<script>
+(function(){
+  // ============ CONFIG ============
+  // TODO: ใส่ Client ID เดียวกับหน้าอื่น
+  const DISCORD_CLIENT_ID = '1534483543462248480';
+  const REDIRECT_URI = window.location.origin + window.location.pathname;
+  const OAUTH_SCOPE = 'identify';
+
+  // TODO: ใส่ Discord User ID ของทีมงานที่อนุญาตให้เข้าหน้านี้ (คลิกขวาชื่อตัวเองใน Discord -> Copy User ID)
+  // หมายเหตุด้านความปลอดภัย: รายชื่อนี้อยู่ในโค้ดฝั่งเบราว์เซอร์ ใครก็ตามที่เปิดดูซอร์สโค้ดจะเห็นรายชื่อ ID ได้
+  // (แต่ยังต้องมี access token ของบัญชีนั้นจริงๆ ถึงจะผ่านการตรวจสอบตอน login ได้)
+  const STAFF_DISCORD_IDS = [
+    '000000000000000000',
+    '111111111111111111'
+  ];
+  // ==================================
+
+  document.getElementById('redirectHint').textContent =
+    'Redirect URI ที่ต้องตั้งค่าใน Discord Developer Portal: ' + REDIRECT_URI;
+
+  function buildLoginUrl(){
+    const params = new URLSearchParams({
+      client_id: DISCORD_CLIENT_ID,
+      redirect_uri: REDIRECT_URI,
+      response_type: 'token',
+      scope: OAUTH_SCOPE
+    });
+    return 'https://discord.com/oauth2/authorize?' + params.toString();
+  }
+  document.getElementById('discordLoginBtn').href = buildLoginUrl();
+
+  function parseAccessToken(){
+    if(!window.location.hash) return null;
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    return hash.get('access_token');
+  }
+
+  const STATUS_LABELS = {
+    pending: { label: 'รอตรวจสอบ', color: 'var(--yellow)' },
+    approved: { label: 'ผ่านการพิจารณา', color: 'var(--ok)' },
+    rejected: { label: 'ไม่ผ่านการพิจารณา', color: 'var(--danger)' },
+    needs_revision: { label: 'ต้องแก้ไขก่อน', color: 'var(--info)' }
+  };
+
+  const questionLabels = {
+    q3: 'ประสบการณ์การเล่น Roleplay ที่ผ่านมา',
+    q4: 'RDM คืออะไร',
+    q5: 'ความแตกต่างระหว่าง breaking character กับ /ooc',
+    q6: 'อธิบายคำว่า Metagaming',
+    q7: 'จำนวนผู้เข้าร่วมปะทะฉับพลันที่อนุญาต',
+    q8: 'บทบาทตัวละครกับเนื้อเรื่อง / ลักษณะตัวละคร'
+  };
+
+  const authWrap = document.getElementById('authWrap');
+  const panelWrap = document.getElementById('panelWrap');
+  const deniedMsg = document.getElementById('deniedMsg');
+  const appList = document.getElementById('appList');
+  const loadingMsg = document.getElementById('loadingMsg');
+  const emptyMsg = document.getElementById('emptyMsg');
+
+  let staffUser = null;
+  let allRecords = [];
+  let currentFilter = 'all';
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : str;
+    return d.innerHTML;
+  }
+
+  async function loadApplications(){
+    loadingMsg.style.display = 'block';
+    emptyMsg.style.display = 'none';
+    appList.innerHTML = '';
+    try{
+      const listRes = await window.storage.list('application:', true);
+      const keys = (listRes && listRes.keys) || [];
+      const records = [];
+      for(const key of keys){
+        try{
+          const r = await window.storage.get(key, true);
+          if(r) records.push({ key, record: JSON.parse(r.value) });
+        }catch(e){ /* skip unreadable entry */ }
+      }
+      records.sort((a,b)=> new Date(b.record.submittedAt) - new Date(a.record.submittedAt));
+      allRecords = records;
+      renderList();
+    }catch(e){
+      appList.innerHTML = '<div class="empty-msg">โหลดข้อมูลไม่สำเร็จ กรุณากด "โหลดใหม่"</div>';
+    }
+    loadingMsg.style.display = 'none';
+  }
+
+  function renderList(){
+    const filtered = currentFilter === 'all'
+      ? allRecords
+      : allRecords.filter(x => (x.record.status || 'pending') === currentFilter);
+
+    appList.innerHTML = '';
+    if(filtered.length === 0){
+      emptyMsg.style.display = 'block';
+      return;
+    }
+    emptyMsg.style.display = 'none';
+
+    filtered.forEach(({key, record})=>{
+      const st = STATUS_LABELS[record.status] || STATUS_LABELS.pending;
+      const card = document.createElement('div');
+      card.className = 'app-card';
+
+      const answersHtml = Object.keys(questionLabels).map(id=>{
+        return '<div class="field"><div class="label">' + escapeHtml(questionLabels[id]) + '</div>' +
+               '<div class="value">' + escapeHtml((record.answers && record.answers[id]) || '-') + '</div></div>';
+      }).join('');
+
+      card.innerHTML =
+        '<div class="app-card-head">' +
+          '<div class="left">' +
+            '<div>' +
+              '<div class="name">' + escapeHtml(record.discordUsername || record.discordId) + '</div>' +
+              '<div class="meta">Steam: ' + escapeHtml(record.steamId) + ' · ' + new Date(record.submittedAt).toLocaleString('th-TH') + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="status-pill" style="color:' + st.color + '">' + st.label + '</div>' +
+        '</div>' +
+        '<div class="app-card-body">' +
+          '<div class="field"><div class="label">Discord ID</div><div class="value">' + escapeHtml(record.discordId) + '</div></div>' +
+          '<div class="field"><div class="label">ลิงก์ช่องทางการสตรีม</div><div class="value">' + escapeHtml(record.streamLink) + '</div></div>' +
+          answersHtml +
+          '<div class="review-row">' +
+            '<select class="status-select">' +
+              Object.keys(STATUS_LABELS).map(k=>'<option value="'+k+'"'+(record.status===k?' selected':'')+'>'+STATUS_LABELS[k].label+'</option>').join('') +
+            '</select>' +
+            '<textarea class="admin-comment" placeholder="ความเห็นถึงผู้สมัคร เช่น เหตุผลที่ไม่ผ่าน หรือข้อที่ต้องแก้ไข...">' + escapeHtml(record.adminComment || '') + '</textarea>' +
+            '<div class="review-actions">' +
+              '<button class="save-btn">บันทึกผลการตรวจสอบ</button>' +
+              '<span class="save-status"></span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      const head = card.querySelector('.app-card-head');
+      const body = card.querySelector('.app-card-body');
+      head.addEventListener('click', ()=> body.classList.toggle('open'));
+
+      const saveBtn = card.querySelector('.save-btn');
+      const saveStatusEl = card.querySelector('.save-status');
+      saveBtn.addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const newStatus = card.querySelector('.status-select').value;
+        const newComment = card.querySelector('.admin-comment').value.trim();
+        saveBtn.disabled = true;
+        saveStatusEl.textContent = 'กำลังบันทึก...';
+        const updated = Object.assign({}, record, {
+          status: newStatus,
+          adminComment: newComment,
+          reviewedAt: new Date().toISOString(),
+          reviewedBy: staffUser.username
+        });
+        try{
+          const ok = await window.storage.set(key, JSON.stringify(updated), true);
+          if(!ok) throw new Error('save failed');
+          saveStatusEl.textContent = 'บันทึกแล้ว ✓';
+          record.status = newStatus;
+          record.adminComment = newComment;
+          const pill = card.querySelector('.status-pill');
+          const s = STATUS_LABELS[newStatus];
+          pill.textContent = s.label;
+          pill.style.color = s.color;
+        }catch(err){
+          saveStatusEl.textContent = 'บันทึกไม่สำเร็จ ลองอีกครั้ง';
+        }
+        saveBtn.disabled = false;
+      });
+
+      appList.appendChild(card);
+    });
+  }
+
+  document.getElementById('filterRow').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.filter-btn');
+    if(!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderList();
+  });
+
+  document.getElementById('refreshBtn').addEventListener('click', loadApplications);
+
+  async function init(){
+    const token = parseAccessToken();
+    if(!token) return;
+    history.replaceState(null, '', REDIRECT_URI);
+    try{
+      const res = await fetch('https://discord.com/api/users/@me', {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      if(!res.ok) throw new Error('discord api ' + res.status);
+      const u = await res.json();
+
+      if(!STAFF_DISCORD_IDS.includes(u.id)){
+        deniedMsg.classList.add('show');
+        return;
+      }
+
+      staffUser = { id: u.id, username: u.username + (u.discriminator && u.discriminator !== '0' ? '#' + u.discriminator : '') };
+      authWrap.style.display = 'none';
+      panelWrap.style.display = 'block';
+      document.getElementById('whoAmI').textContent = 'เข้าสู่ระบบในชื่อ: ' + staffUser.username;
+      loadApplications();
+    }catch(e){
+      deniedMsg.textContent = 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่';
+      deniedMsg.classList.add('show');
+    }
+  }
+  init();
+})();
+</script>
+
+</body>
+</html>

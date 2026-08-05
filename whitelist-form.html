@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบฟอร์มสมัคร Whitelist Streamer | MEDIEVALONLINE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0b0b0c;
+    --panel:#161616;
+    --panel-2:#1f1f20;
+    --yellow:#f5c518;
+    --yellow-dim:#c9a013;
+    --yellow-glow: rgba(245,197,24,0.18);
+    --line: #333333;
+    --text: #eae6da;
+    --text-dim:#9c9890;
+    --danger:#ff5b4a;
+    --ok:#7ce07c;
+    --info:#6fb6ff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(135deg, transparent 0 26px, rgba(245,197,24,0.025) 26px 30px),
+      var(--black);
+    color:var(--text);
+    font-family:'Kanit', sans-serif;
+    line-height:1.6;
+    padding-bottom:80px;
+  }
+
+  .hazard-bar{
+    height:14px;
+    width:100%;
+    background: repeating-linear-gradient(135deg, var(--yellow) 0 22px, var(--black) 22px 44px);
+  }
+  header.hero{
+    padding:52px 20px 40px;
+    text-align:center;
+    background:
+      radial-gradient(ellipse at top, var(--yellow-glow), transparent 60%),
+      var(--black);
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .tagline{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:.35em;
+    color:var(--yellow);
+    border:1px solid var(--yellow-dim);
+    padding:6px 14px;
+    border-radius:2px;
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  h1{
+    margin:0;
+    font-weight:800;
+    font-size:clamp(28px,6vw,46px);
+    letter-spacing:.02em;
+    text-shadow: 0 0 24px var(--yellow-glow);
+  }
+  h1 span{color:var(--yellow);}
+  .sub{
+    color:var(--text-dim);
+    max-width:640px;
+    margin:14px auto 0;
+    font-size:15px;
+  }
+  .warning{
+    max-width:820px;
+    margin:-1px auto 0;
+    background: var(--panel);
+    border:1px solid var(--danger);
+    border-left:6px solid var(--danger);
+    padding:20px 22px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .warning .icon{
+    font-size:24px;
+    line-height:1;
+    color:var(--danger);
+    flex-shrink:0;
+  }
+  .warning p{
+    margin:0;
+    font-size:14.5px;
+    color:#f1ded9;
+  }
+  .warning-wrap{padding:0 20px; margin-top:-10px;}
+
+  main{
+    max-width:820px;
+    margin:40px auto;
+    padding:0 20px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+
+  /* ---- Auth gate ---- */
+  .auth-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:26px 24px;
+    margin-bottom:24px;
+    text-align:center;
+  }
+  .auth-card h2{
+    margin:0 0 8px;
+    font-size:17px;
+    color:var(--yellow);
+  }
+  .auth-card p{
+    color:var(--text-dim);
+    font-size:13.5px;
+    margin:0 0 18px;
+  }
+  .discord-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:#5865F2;
+    color:#fff;
+    border:none;
+    font-family:'Kanit', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding:13px 28px;
+    border-radius:4px;
+    cursor:pointer;
+    text-decoration:none;
+    transition:filter .15s;
+  }
+  .discord-btn:hover{filter:brightness(1.1);}
+  .logged-in-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .avatar-pill{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    padding:8px 16px 8px 8px;
+    border-radius:30px;
+  }
+  .avatar-pill img{width:30px;height:30px;border-radius:50%;display:block;}
+  .avatar-pill span{font-size:14px;font-weight:500;}
+  .logout-link{
+    color:var(--text-dim);
+    font-size:12.5px;
+    text-decoration:underline;
+    cursor:pointer;
+  }
+  .prev-app-note{
+    margin-top:16px;
+    background:rgba(111,182,255,0.08);
+    border:1px solid var(--info);
+    color:#d7ecff;
+    font-size:13px;
+    padding:12px 16px;
+    border-radius:3px;
+    text-align:left;
+  }
+  .redirect-hint{
+    margin-top:16px;
+    font-size:11px;
+    color:#5c5951;
+    word-break:break-all;
+  }
+  #formSection.locked{
+    opacity:.35;
+    pointer-events:none;
+    filter:blur(1px);
+  }
+
+  .q{
+    padding:26px 24px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .q:last-child{border-bottom:none;}
+  .q-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:34px;
+    height:34px;
+    background:var(--yellow);
+    color:#111;
+    font-weight:800;
+    font-size:15px;
+    border-radius:2px;
+    margin-right:10px;
+  }
+  .q-label{
+    font-size:15.5px;
+    font-weight:500;
+    color:var(--text);
+  }
+  .q-sub{
+    font-size:13px;
+    color:var(--text-dim);
+    margin-top:6px;
+    margin-left:44px;
+  }
+  .q-body{margin-top:14px;margin-left:0;}
+  a.helper-link{color:var(--yellow); text-decoration:underline;}
+
+  textarea, input[type="text"]{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    color:var(--text);
+    padding:12px 14px;
+    font-family:'Kanit', sans-serif;
+    font-size:14.5px;
+    resize:vertical;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  textarea{min-height:100px;}
+  textarea:focus, input[type="text"]:focus{
+    outline:none;
+    border-color:var(--yellow);
+    box-shadow:0 0 0 3px var(--yellow-glow);
+  }
+  textarea::placeholder, input::placeholder{color:#5c5951;}
+  input[readonly]{
+    color:var(--text-dim);
+    cursor:not-allowed;
+  }
+
+  .check-row{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:6px;
+  }
+  .check-opt{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    padding:12px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .check-opt:hover{border-color:var(--yellow-dim);}
+  .check-opt.checked{border-color:var(--yellow); background:rgba(245,197,24,0.06);}
+  .check-opt input{
+    width:18px; height:18px;
+    accent-color:var(--yellow);
+    flex-shrink:0;
+  }
+
+  .required-star{color:var(--danger); margin-left:3px;}
+
+  .submit-wrap{
+    margin-top:28px;
+    text-align:center;
+  }
+  .status-msg{
+    font-size:13.5px;
+    margin-bottom:14px;
+    min-height:18px;
+    color:var(--danger);
+  }
+  button.submit-btn{
+    background:var(--yellow);
+    color:#111;
+    border:none;
+    font-family:'Kanit', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    padding:16px 46px;
+    border-radius:3px;
+    cursor:pointer;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    transition:transform .1s, box-shadow .15s;
+    box-shadow:0 0 0 0 var(--yellow-glow);
+  }
+  button.submit-btn:hover{transform:translateY(-2px); box-shadow:0 8px 20px var(--yellow-glow);}
+  button.submit-btn:active{transform:translateY(0);}
+  button.submit-btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
+
+  .privacy-note{
+    font-size:12px;
+    color:var(--text-dim);
+    max-width:520px;
+    margin:14px auto 0;
+  }
+  .status-link{
+    display:inline-block;
+    margin-top:10px;
+    font-size:12.5px;
+    color:var(--yellow);
+  }
+
+  .success-panel{
+    max-width:820px;
+    margin:40px auto;
+    padding:40px 24px;
+    text-align:center;
+    background:var(--panel);
+    border:1px solid var(--ok);
+    border-radius:4px;
+    display:none;
+  }
+  .success-panel.show{display:block;}
+  .success-panel .stamp{
+    display:inline-block;
+    border:3px solid var(--ok);
+    color:var(--ok);
+    font-weight:800;
+    font-size:20px;
+    padding:10px 24px;
+    border-radius:2px;
+    letter-spacing:.1em;
+    transform:rotate(-3deg);
+    margin-bottom:18px;
+  }
+  .success-panel p{color:var(--text-dim); font-size:14px;}
+
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:12px;
+    margin-top:40px;
+    padding:0 20px;
+  }
+
+  @media (max-width:600px){
+    .q{padding:20px 16px;}
+    .q-sub{margin-left:0; margin-top:8px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="hazard-bar"></div>
+  <header class="hero">
+    <span class="tagline">Whitelist Application · Streamer</span>
+    <h1>MEDIEVAL <span>ROLEPLAY TH</span></h1>
+    <p class="sub" id="heroSub">แบบฟอร์มสมัคร Whitelist สำหรับสตรีมเมอร์ กรอกข้อมูลให้ครบถ้วน ทีมงานจะตรวจสอบและติดต่อกลับ</p>
+  </header>
+
+  <div class="warning-wrap" id="warningWrap">
+    <div class="warning">
+      <div class="icon">⚠</div>
+      <p>คุณต้องมีอายุ 18 ปีขึ้นไปจึงจะสามารถเล่นบนเซิร์ฟเวอร์นี้ได้ เนื่องจากมีเนื้อหาบางส่วนที่มีภาพหรือเนื้อหาที่รุนแรง</p>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- AUTH GATE -->
+    <div class="auth-card" id="authCard">
+      <div id="authLoggedOut">
+        <h2>ยืนยันตัวตนก่อนกรอกใบสมัคร</h2>
+        <p>เข้าสู่ระบบด้วย Discord เพื่อผูก Discord ID ของคุณกับใบสมัครโดยอัตโนมัติ ป้องกันการกรอก ID ผิดหรือปลอมตัวเป็นผู้อื่น</p>
+        <a href="#" id="discordLoginBtn" class="discord-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.099.246.197.373.291a.077.077 0 0 1-.006.128 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.106c.36.698.772 1.362 1.225 1.994a.077.077 0 0 0 .084.028 19.83 19.83 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.662a.06.06 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.955 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          เข้าสู่ระบบด้วย Discord
+        </a>
+        <div class="redirect-hint" id="redirectHint"></div>
+      </div>
+
+      <div id="authLoggedIn" style="display:none;">
+        <div class="logged-in-row">
+          <div class="avatar-pill">
+            <img id="discordAvatar" src="" alt="">
+            <span id="discordUsername"></span>
+          </div>
+          <span class="logout-link" id="logoutLink">ออกจากระบบ / เปลี่ยนบัญชี</span>
+        </div>
+        <div id="prevAppNote"></div>
+      </div>
+    </div>
+
+    <div id="formSection" class="locked">
+      <div class="card" id="formCard">
+
+        <!-- Q1 -->
+        <div class="q">
+          <span class="q-num">1</span><span class="q-label">คุณมีอายุ 18 ปีขึ้นไปหรือไม่?<span class="required-star">*</span></span>
+          <div class="q-body">
+            <div class="check-row" id="q1group">
+              <label class="check-opt" data-val="yes">
+                <input type="checkbox" name="q1" value="yes"> ใช่ ฉันมีอายุ 18 ปีขึ้นไป
+              </label>
+              <label class="check-opt" data-val="no">
+                <input type="checkbox" name="q1" value="no"> ไม่ใช่ ฉันอายุต่ำกว่า 18 ปี
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="q">
+          <span class="q-num">2</span><span class="q-label">Steam HEX ID<span class="required-star">*</span></span>
+          <div class="q-sub">วิธีหา Steam HEX: <a class="helper-link" href="https://steamid.pro/" target="_blank" rel="noopener">https://steamid.pro/</a></div>
+          <div class="q-body">
+            <input type="text" id="q2" placeholder="STEAM_0:X:XXXXXXXX">
+          </div>
+          <div class="q-label" style="display:block; margin-top:18px;">Discord ID<span class="required-star">*</span></div>
+          <div class="q-sub">ดึงมาจากบัญชี Discord ที่คุณเข้าสู่ระบบด้านบนโดยอัตโนมัติ</div>
+          <div class="q-body">
+            <input type="text" id="q2b" placeholder="เข้าสู่ระบบด้วย Discord ก่อน" readonly>
+          </div>
+          <div class="q-label" style="display:block; margin-top:18px;">ลิงก์ช่องทางการสตรีม<span class="required-star">*</span></div>
+          <div class="q-sub">เช่น ลิงก์ช่อง Twitch, YouTube, Facebook Gaming หรือแพลตฟอร์มอื่นที่คุณใช้ไลฟ์สด</div>
+          <div class="q-body">
+            <input type="text" id="q2c" placeholder="https://www.twitch.tv/yourchannel">
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="q">
+          <span class="q-num">3</span><span class="q-label">โปรดระบุประสบการณ์การเล่นบทบาทสมมติ (Roleplay) ที่ผ่านมาของคุณ มีเซิฟเวอร์ใดบ้าง (ถ้าไม่มีตอบไม่มี)<span class="required-star">*</span></span>
+          <div class="q-body"><textarea id="q3" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="q">
+          <span class="q-num">4</span><span class="q-label">RDM คืออะไร? ช่วยยกตัวอย่างตามที่คุณเข้าใจ<span class="required-star">*</span></span>
+          <div class="q-body"><textarea id="q4" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="q">
+          <span class="q-num">5</span><span class="q-label">อธิบายความแตกต่างระหว่างการหลุดคาแรคเตอร์ (breaking character) กับการใช้คำสั่ง /ooc<span class="required-star">*</span></span>
+          <div class="q-body"><textarea id="q5" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="q">
+          <span class="q-num">6</span><span class="q-label">อธิบายคำว่า "Metagaming" ในแบบของคุณเอง (พร้อมยกตัวอย่างประกอบ 2 ข้อ)<span class="required-star">*</span></span>
+          <div class="q-body"><textarea id="q6" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="q">
+          <span class="q-num">7</span><span class="q-label">อนุญาตให้มีผู้เข้าร่วมในกิจกรรมการปะทะที่เกิดขึ้นแบบฉับพลันได้จำนวนกี่คนในคราวเดียวกัน (ต่อฝ่าย) และคนอื่นๆในบริเวณต้องทำอย่างไร?<span class="required-star">*</span></span>
+          <div class="q-body"><textarea id="q7" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="q">
+          <span class="q-num">8</span><span class="q-label">โปรดอ่านกฎของเซิร์ฟเวอร์และข้อมูลเนื้อเรื่อง (Lore) ให้ครบถ้วนก่อนกรอกข้อมูลด้านล่างนี้ เนื่องจากโลกในเซิร์ฟเวอร์นี้เป็นโลกที่สร้างขึ้นเอง (Homebrew) ขอให้ระบุด้วยว่าตัวละครของคุณมีบทบาทหรือความเกี่ยวข้องอย่างไรกับเนื้อเรื่องของเรา ข้อมูลที่คุณส่งมานี้จะเป็นข้อมูลสำหรับตัวละครชั่วคราว ซึ่งคุณสามารถเลือกเล่นได้หากได้รับการยอมรับ หรือจะเปลี่ยนไปใช้ตัวละครอื่นแทนก็ได้</span>
+          <div class="q-label" style="display:block; margin-top:18px;">พื้นที่เล่นเกมในปัจจุบันคือบริเวณ Wraithwind Clearing ในเขต Frostmarch และ Rivenvale บนทวีป Veloria</div>
+          <div class="q-label" style="display:block; margin-top:18px;">บรรยายลักษณะตัวละครของคุณ<span class="required-star">*</span></div>
+          <div class="q-body"><textarea id="q8" placeholder="พิมพ์คำตอบของคุณที่นี่..." style="min-height:140px;"></textarea></div>
+        </div>
+
+      </div>
+
+      <div class="submit-wrap">
+        <div class="status-msg" id="statusMsg"></div>
+        <button class="submit-btn" id="submitBtn">ส่งใบสมัคร</button>
+        <p class="privacy-note">เมื่อกดส่ง คำตอบของคุณจะถูกจัดเก็บและทีมงานสามารถเข้าดูเพื่อตรวจสอบใบสมัครได้ ผูกกับบัญชี Discord ที่คุณเข้าสู่ระบบ</p>
+      </div>
+    </div>
+
+    <div class="success-panel" id="successPanel">
+      <div class="stamp">ส่งใบสมัครแล้ว</div>
+      <p>ใบสมัคร Whitelist Streamer ของคุณถูกส่งถึงทีมงานเรียบร้อยแล้ว กรุณารอการตรวจสอบ<br>คุณสามารถดาวน์โหลดสำเนาคำตอบเก็บไว้เองได้ด้านล่างนี้</p>
+      <a href="status.html" class="status-link">→ ตรวจสอบสถานะใบสมัครของคุณได้ที่นี่</a>
+    </div>
+
+    <p style="text-align:center;"><a href="status.html" class="status-link" style="display:inline-block;margin-top:8px;">มีใบสมัครอยู่แล้ว? ตรวจสอบสถานะที่นี่</a></p>
+
+  </main>
+
+  <footer id="footerNote">คำตอบของคุณจะถูกส่งให้ทีมงานตรวจสอบ และมีสำเนาไฟล์ .txt ให้ดาวน์โหลดเก็บไว้เองด้วย</footer>
+
+<script>
+(function(){
+
+  // ============ DISCORD OAUTH CONFIG ============
+  // TODO: ใส่ Client ID ของแอปที่สร้างใน Discord Developer Portal
+  const DISCORD_CLIENT_ID = '1534483543462248480';
+  const REDIRECT_URI = window.location.origin + window.location.pathname;
+  const OAUTH_SCOPE = 'identify';
+  // ================================================
+
+  document.getElementById('redirectHint').textContent =
+    'Redirect URI ที่ต้องตั้งค่าใน Discord Developer Portal: ' + REDIRECT_URI;
+
+  const authLoggedOut = document.getElementById('authLoggedOut');
+  const authLoggedIn = document.getElementById('authLoggedIn');
+  const formSection = document.getElementById('formSection');
+  const discordAvatarEl = document.getElementById('discordAvatar');
+  const discordUsernameEl = document.getElementById('discordUsername');
+  const prevAppNote = document.getElementById('prevAppNote');
+  const q2b = document.getElementById('q2b');
+
+  let currentUser = null; // { id, username, avatarUrl }
+
+  function buildLoginUrl(){
+    const params = new URLSearchParams({
+      client_id: DISCORD_CLIENT_ID,
+      redirect_uri: REDIRECT_URI,
+      response_type: 'token',
+      scope: OAUTH_SCOPE
+    });
+    return 'https://discord.com/oauth2/authorize?' + params.toString();
+  }
+
+  document.getElementById('discordLoginBtn').href = buildLoginUrl();
+
+  function parseAccessToken(){
+    if(!window.location.hash) return null;
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    return hash.get('access_token');
+  }
+
+  const STATUS_LABELS = {
+    pending: { label: 'รอตรวจสอบ', color: 'var(--yellow)' },
+    approved: { label: 'ผ่านการพิจารณา', color: 'var(--ok)' },
+    rejected: { label: 'ไม่ผ่านการพิจารณา', color: 'var(--danger)' },
+    needs_revision: { label: 'ต้องแก้ไขก่อน', color: 'var(--info)' }
+  };
+
+  async function checkPreviousApplication(discordId){
+    try{
+      const res = await window.storage.get('application:' + discordId, true);
+      if(!res) return;
+      const record = JSON.parse(res.value);
+      const st = STATUS_LABELS[record.status] || STATUS_LABELS.pending;
+      prevAppNote.innerHTML =
+        '<div class="prev-app-note">พบใบสมัครก่อนหน้าของคุณ — สถานะปัจจุบัน: ' +
+        '<b style="color:' + st.color + '">' + st.label + '</b>' +
+        (record.adminComment ? '<br>หมายเหตุจากทีมงาน: ' + escapeHtml(record.adminComment) : '') +
+        '<br>การส่งฟอร์มใหม่จะเขียนทับใบสมัครเดิม</div>';
+    }catch(e){
+      // no previous application, ignore
+    }
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function setLoggedIn(user){
+    currentUser = user;
+    authLoggedOut.style.display = 'none';
+    authLoggedIn.style.display = 'block';
+    discordAvatarEl.src = user.avatarUrl;
+    discordUsernameEl.textContent = user.username;
+    q2b.value = user.id;
+    formSection.classList.remove('locked');
+    checkPreviousApplication(user.id);
+  }
+
+  document.getElementById('logoutLink').addEventListener('click', ()=>{
+    currentUser = null;
+    authLoggedIn.style.display = 'none';
+    authLoggedOut.style.display = 'block';
+    formSection.classList.add('locked');
+    q2b.value = '';
+  });
+
+  async function init(){
+    const token = parseAccessToken();
+    if(token){
+      // clean the URL so token doesn't linger in the address bar / history
+      history.replaceState(null, '', REDIRECT_URI);
+      try{
+        const res = await fetch('https://discord.com/api/users/@me', {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if(!res.ok) throw new Error('discord api ' + res.status);
+        const user = await res.json();
+        const avatarUrl = user.avatar
+          ? 'https://cdn.discordapp.com/avatars/' + user.id + '/' + user.avatar + '.png?size=64'
+          : 'https://cdn.discordapp.com/embed/avatars/' + ((BigInt(user.id) >> 22n) % 6n) + '.png';
+        setLoggedIn({
+          id: user.id,
+          username: user.username + (user.discriminator && user.discriminator !== '0' ? '#' + user.discriminator : ''),
+          avatarUrl: avatarUrl
+        });
+      }catch(e){
+        document.getElementById('statusMsg').textContent = 'เข้าสู่ระบบ Discord ไม่สำเร็จ กรุณาลองใหม่';
+      }
+    }
+  }
+  init();
+
+  // ============ FORM SUBMIT LOGIC ============
+
+  const q1group = document.getElementById('q1group');
+  const q1boxes = q1group.querySelectorAll('input[type="checkbox"]');
+  q1boxes.forEach(box=>{
+    box.addEventListener('change', ()=>{
+      if(box.checked){
+        q1boxes.forEach(other=>{
+          if(other!==box){ other.checked=false; }
+        });
+      }
+      q1boxes.forEach(b=>{
+        b.closest('.check-opt').classList.toggle('checked', b.checked);
+      });
+    });
+  });
+
+  const statusMsg = document.getElementById('statusMsg');
+  const submitBtn = document.getElementById('submitBtn');
+  const successPanel = document.getElementById('successPanel');
+
+  const textFieldIds = ['q3','q4','q5','q6','q7','q8'];
+
+  const questionLabels = {
+    q3: 'ประสบการณ์การเล่น Roleplay ที่ผ่านมา',
+    q4: 'RDM คืออะไร',
+    q5: 'ความแตกต่างระหว่าง breaking character กับ /ooc',
+    q6: 'อธิบายคำว่า Metagaming',
+    q7: 'จำนวนผู้เข้าร่วมปะทะฉับพลันที่อนุญาต',
+    q8: 'บทบาทตัวละครกับเนื้อเรื่อง / ลักษณะตัวละคร'
+  };
+
+  function buildTxtContent(record){
+    const lines = [];
+    lines.push('=== ใบสมัคร Whitelist Streamer - MEDIEVALONLINE ROLEPLAY TH ===');
+    lines.push('วันที่บันทึก: ' + new Date(record.submittedAt).toLocaleString('th-TH'));
+    lines.push('Discord: ' + record.discordUsername + ' (' + record.discordId + ')');
+    lines.push('Steam HEX ID: ' + record.steamId);
+    lines.push('ลิงก์ช่องทางการสตรีม: ' + record.streamLink);
+    lines.push('อายุ 18 ปีขึ้นไป: ใช่');
+    lines.push('');
+    textFieldIds.forEach((id, i)=>{
+      lines.push((i+1) + '. ' + questionLabels[id]);
+      lines.push(record.answers[id]);
+      lines.push('');
+    });
+    lines.push('=== จบใบสมัคร ===');
+    return lines.join('\n');
+  }
+
+  function sanitizeKey(str){
+    return str.trim().replace(/[^a-zA-Z0-9_:-]/g, '_');
+  }
+
+  function offerLocalDownload(record){
+    const content = buildTxtContent(record);
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const filename = 'whitelist_streamer_' + sanitizeKey(record.discordId) + '.txt';
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.className = 'submit-btn';
+    a.style.display = 'inline-block';
+    a.style.marginTop = '18px';
+    a.style.background = 'var(--ok)';
+    a.style.textDecoration = 'none';
+    a.textContent = 'ดาวน์โหลดไฟล์ .txt เก็บไว้เอง';
+    successPanel.appendChild(a);
+  }
+
+  const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1534375165407006772/JDU9h6r2PNqxr1O2JKyUD4tj24SiuS1nnBQA_99JH9BmVMCwjwRgeGaqv3SQHIWZ227P';
+
+  function truncateField(str, max){
+    str = String(str);
+    return str.length > max ? str.slice(0, max - 3) + '...' : str;
+  }
+
+  async function sendToDiscord(record){
+    const fields = [
+      { name: 'Discord', value: truncateField(record.discordUsername + ' (' + record.discordId + ')', 1024), inline: true },
+      { name: 'Steam HEX ID', value: truncateField(record.steamId || '-', 1024), inline: true },
+      { name: 'ลิงก์สตรีม', value: truncateField(record.streamLink || '-', 1024), inline: false }
+    ];
+    textFieldIds.forEach(id=>{
+      fields.push({
+        name: truncateField(questionLabels[id], 256),
+        value: truncateField((record.answers && record.answers[id]) || '-', 1024)
+      });
+    });
+
+    const payload = {
+      username: 'Whitelist Streamer Bot',
+      embeds: [{
+        title: 'ใบสมัคร Whitelist Streamer ใหม่',
+        color: 16050456,
+        fields: fields,
+        timestamp: record.submittedAt
+      }]
+    };
+
+    const res = await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok){
+      throw new Error('Discord webhook responded with ' + res.status);
+    }
+  }
+
+  submitBtn.addEventListener('click', async ()=>{
+    statusMsg.textContent = '';
+    statusMsg.style.color = 'var(--danger)';
+
+    if(!currentUser){
+      statusMsg.textContent = 'กรุณาเข้าสู่ระบบด้วย Discord ก่อนกรอกใบสมัคร';
+      return;
+    }
+
+    const yesChecked = q1group.querySelector('input[value="yes"]').checked;
+    const noChecked = q1group.querySelector('input[value="no"]').checked;
+
+    if(!yesChecked && !noChecked){
+      statusMsg.textContent = 'กรุณายืนยันอายุของคุณในข้อ 1';
+      return;
+    }
+    if(noChecked){
+      statusMsg.textContent = 'ขออภัย เซิร์ฟเวอร์นี้จำกัดผู้เล่นอายุ 18 ปีขึ้นไปเท่านั้น จึงไม่สามารถดำเนินการต่อได้';
+      return;
+    }
+
+    const steamId = document.getElementById('q2').value.trim();
+    if(!steamId){
+      statusMsg.textContent = 'กรุณากรอก Steam HEX ID ในข้อ 2';
+      document.getElementById('q2').focus();
+      return;
+    }
+
+    const streamLink = document.getElementById('q2c').value.trim();
+    if(!streamLink){
+      statusMsg.textContent = 'กรุณากรอกลิงก์ช่องทางการสตรีมในข้อ 2';
+      document.getElementById('q2c').focus();
+      return;
+    }
+
+    for(const id of textFieldIds){
+      const el = document.getElementById(id);
+      if(!el || !el.value.trim()){
+        statusMsg.textContent = 'กรุณากรอกคำตอบให้ครบทุกข้อก่อนส่งใบสมัคร';
+        if(el) el.focus();
+        return;
+      }
+    }
+
+    const values = {};
+    textFieldIds.forEach(id => { values[id] = document.getElementById(id).value.trim(); });
+
+    const record = {
+      discordId: currentUser.id,
+      discordUsername: currentUser.username,
+      steamId,
+      streamLink,
+      answers: values,
+      submittedAt: new Date().toISOString(),
+      status: 'pending',
+      adminComment: '',
+      reviewedAt: null,
+      reviewedBy: null
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'กำลังส่ง...';
+
+    const key = 'application:' + currentUser.id;
+    const results = await Promise.allSettled([
+      sendToDiscord(record),
+      window.storage.set(key, JSON.stringify(record), true)
+    ]);
+
+    const discordOk = results[0].status === 'fulfilled';
+    const storageOk = results[1].status === 'fulfilled' && results[1].value;
+
+    if(!discordOk) console.error('Discord webhook failed:', results[0].reason);
+    if(!storageOk) console.error('Storage save failed:', results[1].reason || results[1].value);
+
+    formSection.style.display = 'none';
+    document.getElementById('warningWrap').style.display = 'none';
+    document.getElementById('authCard').style.display = 'none';
+    successPanel.classList.add('show');
+    offerLocalDownload(record);
+
+    if(!storageOk){
+      const warnP = document.createElement('p');
+      warnP.style.color = 'var(--danger)';
+      warnP.style.fontSize = '13px';
+      warnP.textContent = 'หมายเหตุ: ไม่สามารถบันทึกใบสมัครลงระบบได้ กรุณาส่งไฟล์ .txt ที่ดาวน์โหลดด้านล่างให้ทีมงานด้วยตนเองผ่าน Discord';
+      successPanel.appendChild(warnP);
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
