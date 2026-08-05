@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>แบบฟอร์มสมัคร Whitelist Streamer | MEDIEVALONLINE</title>
+<title>แบบฟอร์มสมัคร Whitelist | MEDIEVALONLINE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
 <style>
@@ -359,7 +359,7 @@
 
   <div class="hazard-bar"></div>
   <header class="hero">
-    <span class="tagline">Whitelist Application · Streamer</span>
+    <span class="tagline">Whitelist Application</span>
     <h1>MEDIEVAL <span>ROLEPLAY TH</span></h1>
     <p class="sub" id="heroSub">แบบฟอร์มสมัคร Whitelist สำหรับสตรีมเมอร์ กรอกข้อมูลให้ครบถ้วน ทีมงานจะตรวจสอบและติดต่อกลับ</p>
   </header>
@@ -500,7 +500,7 @@
 
     <div class="success-panel" id="successPanel">
       <div class="stamp">ส่งใบสมัครแล้ว</div>
-      <p>ใบสมัคร Whitelist Streamer ของคุณถูกส่งถึงทีมงานเรียบร้อยแล้ว กรุณารอการตรวจสอบ<br>คุณสามารถดาวน์โหลดสำเนาคำตอบเก็บไว้เองได้ด้านล่างนี้</p>
+      <p>ใบสมัคร Whitelist ของคุณถูกส่งถึงทีมงานเรียบร้อยแล้ว กรุณารอการตรวจสอบ<br>คุณสามารถดาวน์โหลดสำเนาคำตอบเก็บไว้เองได้ด้านล่างนี้</p>
       <a href="status.html" class="status-link">→ ตรวจสอบสถานะใบสมัครของคุณได้ที่นี่</a>
     </div>
 
@@ -661,7 +661,7 @@
 
   function buildTxtContent(record){
     const lines = [];
-    lines.push('=== ใบสมัคร Whitelist Streamer - MEDIEVALONLINE ROLEPLAY TH ===');
+    lines.push('=== ใบสมัคร Whitelist - MEDIEVALONLINE ROLEPLAY TH ===');
     lines.push('วันที่บันทึก: ' + new Date(record.submittedAt).toLocaleString('th-TH'));
     lines.push('Discord: ' + record.discordUsername + ' (' + record.discordId + ')');
     lines.push('Steam HEX ID: ' + record.steamId);
@@ -685,7 +685,7 @@
     const content = buildTxtContent(record);
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    const filename = 'whitelist_streamer_' + sanitizeKey(record.discordId) + '.txt';
+    const filename = 'whitelist_' + sanitizeKey(record.discordId) + '.txt';
 
     const a = document.createElement('a');
     a.href = url;
@@ -720,9 +720,9 @@
     });
 
     const payload = {
-      username: 'Whitelist Streamer Bot',
+      username: 'Whitelist Bot',
       embeds: [{
-        title: 'ใบสมัคร Whitelist Streamer ใหม่',
+        title: 'ใบสมัคร Whitelist ใหม่',
         color: 16050456,
         fields: fields,
         timestamp: record.submittedAt
