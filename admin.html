@@ -84,6 +84,18 @@
     padding:10px 22px; border-radius:3px; cursor:pointer; font-family:'Kanit',sans-serif;
   }
   .save-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .delete-btn{
+    background:transparent; color:var(--danger); border:1px solid var(--danger); font-weight:600; font-size:13px;
+    padding:9px 18px; border-radius:3px; cursor:pointer; font-family:'Kanit',sans-serif;
+  }
+  .delete-btn:hover{ background:rgba(255,91,74,0.12); }
+  .delete-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .cleanup-btn{
+    background:transparent; color:var(--danger); border:1px solid var(--danger); font-size:12.5px;
+    padding:7px 14px; border-radius:4px; cursor:pointer; font-family:'Kanit',sans-serif;
+  }
+  .cleanup-btn:hover{ background:rgba(255,91,74,0.12); }
+  .cleanup-btn:disabled{opacity:.5; cursor:not-allowed;}
   .save-status{ font-size:12.5px; color:var(--text-dim); }
   .empty-msg{ text-align:center; color:var(--text-dim); padding:40px 0; }
   .loading{ text-align:center; color:var(--text-dim); font-size:13px; padding:30px 0; }
@@ -119,7 +131,9 @@
           <button class="filter-btn" data-filter="needs_revision">ต้องแก้ไข</button>
         </div>
         <button class="refresh-btn" id="refreshBtn">โหลดใหม่</button>
+        <button class="cleanup-btn" id="cleanupBtn">ลบใบสมัคร Rejected เกิน 90 วัน</button>
       </div>
+      <div class="save-status" id="cleanupStatus" style="margin-bottom:14px;"></div>
 
       <div class="loading" id="loadingMsg">กำลังโหลดใบสมัคร...</div>
       <div class="empty-msg" id="emptyMsg" style="display:none;">ยังไม่มีใบสมัครในระบบ</div>
@@ -262,6 +276,7 @@
             '<textarea class="admin-comment" placeholder="ความเห็นถึงผู้สมัคร เช่น เหตุผลที่ไม่ผ่าน หรือข้อที่ต้องแก้ไข...">' + escapeHtml(record.adminComment || '') + '</textarea>' +
             '<div class="review-actions">' +
               '<button class="save-btn">บันทึกผลการตรวจสอบ</button>' +
+              '<button class="delete-btn"' + (record.status !== 'rejected' ? ' disabled title="ลบได้เฉพาะใบที่สถานะ ไม่ผ่านการพิจารณา เท่านั้น"' : '') + '>ลบใบสมัครนี้</button>' +
               '<span class="save-status"></span>' +
             '</div>' +
           '</div>' +
@@ -272,6 +287,7 @@
       head.addEventListener('click', ()=> body.classList.toggle('open'));
 
       const saveBtn = card.querySelector('.save-btn');
+      const deleteBtn = card.querySelector('.delete-btn');
       const saveStatusEl = card.querySelector('.save-status');
       saveBtn.addEventListener('click', async (e)=>{
         e.stopPropagation();
@@ -291,14 +307,40 @@
           saveStatusEl.textContent = 'บันทึกแล้ว ✓';
           record.status = newStatus;
           record.adminComment = newComment;
+          record.reviewedAt = updated.reviewedAt;
           const pill = card.querySelector('.status-pill');
           const s = STATUS_LABELS[newStatus];
           pill.textContent = s.label;
           pill.style.color = s.color;
+          // ปุ่มลบใช้ได้เฉพาะตอนสถานะเป็น "ไม่ผ่านการพิจารณา" เท่านั้น
+          // (ตรงกับ Firestore Security Rules ที่อนุญาต delete เฉพาะ status == 'rejected')
+          deleteBtn.disabled = newStatus !== 'rejected';
+          deleteBtn.title = newStatus !== 'rejected'
+            ? 'ลบได้เฉพาะใบที่สถานะ ไม่ผ่านการพิจารณา เท่านั้น'
+            : '';
         }catch(err){
           saveStatusEl.textContent = 'บันทึกไม่สำเร็จ ลองอีกครั้ง';
         }
         saveBtn.disabled = false;
+      });
+
+      deleteBtn.addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const confirmed = confirm(
+          'ยืนยันลบใบสมัครของ "' + (record.discordUsername || record.discordId) + '" ถาวร?\nการลบนี้กู้คืนไม่ได้'
+        );
+        if(!confirmed) return;
+        deleteBtn.disabled = true;
+        saveStatusEl.textContent = 'กำลังลบ...';
+        try{
+          await window.storage.delete(key, true);
+          allRecords = allRecords.filter(x => x.key !== key);
+          card.remove();
+          if(appList.children.length === 0) emptyMsg.style.display = 'block';
+        }catch(err){
+          saveStatusEl.textContent = 'ลบไม่สำเร็จ ลองอีกครั้ง';
+          deleteBtn.disabled = false;
+        }
       });
 
       appList.appendChild(card);
@@ -315,6 +357,42 @@
   });
 
   document.getElementById('refreshBtn').addEventListener('click', loadApplications);
+
+  document.getElementById('cleanupBtn').addEventListener('click', async ()=>{
+    const cleanupStatus = document.getElementById('cleanupStatus');
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 90);
+
+    const targets = allRecords.filter(({record})=>{
+      if(record.status !== 'rejected') return false;
+      const refDate = record.reviewedAt || record.submittedAt;
+      if(!refDate) return false;
+      return new Date(refDate) < cutoff;
+    });
+
+    if(targets.length === 0){
+      cleanupStatus.textContent = 'ไม่มีใบสมัคร Rejected ที่เกิน 90 วัน';
+      return;
+    }
+
+    const confirmed = confirm(
+      'พบใบสมัคร Rejected ที่เกิน 90 วัน จำนวน ' + targets.length + ' ใบ\n' +
+      'ยืนยันลบทั้งหมดถาวร? การลบนี้กู้คืนไม่ได้'
+    );
+    if(!confirmed) return;
+
+    document.getElementById('cleanupBtn').disabled = true;
+    let done = 0, failed = 0;
+    for(const {key} of targets){
+      try{
+        await window.storage.delete(key, true);
+        done++;
+      }catch(e){ failed++; }
+    }
+    cleanupStatus.textContent = 'ลบสำเร็จ ' + done + ' ใบ' + (failed ? (', ล้มเหลว ' + failed + ' ใบ') : '');
+    document.getElementById('cleanupBtn').disabled = false;
+    loadApplications();
+  });
 
   async function init(){
     const token = parseAccessToken();
