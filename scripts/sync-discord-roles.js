@@ -20,8 +20,8 @@ const { getFirestore } = require("firebase-admin/firestore");
 // ---------------------------------------------------------------------
 // TODO: แก้ 2 ค่านี้ให้ตรงกับเซิร์ฟเวอร์ Discord ของคุณ (วิธีหาอยู่ใน README)
 // ---------------------------------------------------------------------
-const GUILD_ID = "650731646655528970";
-const APPROVED_ROLE_ID = "1535111458566832158";
+const GUILD_ID = "1398750722501378158";
+const APPROVED_ROLE_ID = "1525260047779627109";
 
 const DISCORD_API = "https://discord.com/api/v10";
 const COLLECTION = "applications";
