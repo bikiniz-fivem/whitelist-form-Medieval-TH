@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>แบบฟอร์มสมัคร Whitelist | MEDIEVALONLINE</title>
+<title>แบบฟอร์มสมัคร Whitelist สตรีมเมอร์ | MEDIEVALONLINE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
 <style>
@@ -178,6 +178,11 @@
     border-radius:3px;
     text-align:left;
   }
+  .prev-app-note.warn{
+    background:rgba(255,91,74,0.08);
+    border-color:var(--danger);
+    color:#f1ded9;
+  }
   .redirect-hint{
     margin-top:16px;
     font-size:11px;
@@ -223,7 +228,7 @@
   .q-body{margin-top:14px;margin-left:0;}
   a.helper-link{color:var(--yellow); text-decoration:underline;}
 
-  textarea, input[type="text"]{
+  textarea, input[type="text"], select{
     width:100%;
     background:var(--panel-2);
     border:1px solid var(--line);
@@ -235,8 +240,8 @@
     resize:vertical;
     transition:border-color .15s, box-shadow .15s;
   }
-  textarea{min-height:100px;}
-  textarea:focus, input[type="text"]:focus{
+  textarea{min-height:90px;}
+  textarea:focus, input[type="text"]:focus, select:focus{
     outline:none;
     border-color:var(--yellow);
     box-shadow:0 0 0 3px var(--yellow-glow);
@@ -246,6 +251,7 @@
     color:var(--text-dim);
     cursor:not-allowed;
   }
+  select{ cursor:pointer; appearance:auto; }
 
   .check-row{
     display:flex;
@@ -273,6 +279,7 @@
   }
 
   .required-star{color:var(--danger); margin-left:3px;}
+  .optional-tag{color:var(--text-dim); font-size:12px; margin-left:6px; font-weight:400;}
 
   .submit-wrap{
     margin-top:28px;
@@ -359,9 +366,9 @@
 
   <div class="hazard-bar"></div>
   <header class="hero">
-    <span class="tagline">Whitelist Application</span>
+    <span class="tagline">Streamer Whitelist Application</span>
     <h1>MEDIEVAL <span>ROLEPLAY TH</span></h1>
-    <p class="sub" id="heroSub">แบบฟอร์มสมัคร Whitelist กรอกข้อมูลให้ครบถ้วนรอทีมงานตรวจสอบ ติดตามผลผ่านช่องทางนี้ได้เลย</p>
+    <p class="sub" id="heroSub">แบบฟอร์มสมัคร Whitelist สำหรับสตรีมเมอร์/ผู้สร้างคอนเทนต์โดยเฉพาะ กรอกข้อมูลช่องทางของคุณให้ครบถ้วนรอทีมงานตรวจสอบ</p>
   </header>
 
   <div class="warning-wrap" id="warningWrap">
@@ -426,67 +433,46 @@
           <div class="q-body">
             <input type="text" id="q2b" placeholder="เข้าสู่ระบบด้วย Discord ก่อน" readonly>
           </div>
-          <div class="q-label" style="display:block; margin-top:18px;">ลิงก์ช่องทางการสตรีม<span class="required-star">*</span></div>
-          <div class="q-sub">เช่น ลิงก์ช่อง Twitch, YouTube, Facebook Gaming หรือแพลตฟอร์มอื่นที่คุณใช้ไลฟ์สด</div>
+        </div>
+
+        <!-- Q3: Platform -->
+        <div class="q">
+          <span class="q-num">3</span><span class="q-label">แพลตฟอร์มหลักที่คุณใช้สตรีม<span class="required-star">*</span></span>
           <div class="q-body">
-            <input type="text" id="q2c" placeholder="https://www.twitch.tv/yourchannel">
+            <select id="qPlatform">
+              <option value="">— เลือกแพลตฟอร์ม —</option>
+              <option value="Twitch">Twitch</option>
+              <option value="YouTube">YouTube</option>
+              <option value="TikTok">TikTok</option>
+              <option value="Facebook Gaming">Facebook Gaming</option>
+              <option value="อื่นๆ">อื่นๆ</option>
+            </select>
           </div>
         </div>
 
-        <!-- Q3 -->
+        <!-- Q4: Channel link -->
         <div class="q">
-          <span class="q-num">3</span><span class="q-label">โปรดระบุประสบการณ์การเล่นบทบาทสมมติ (Roleplay) ที่ผ่านมาของคุณ มีเซิฟเวอร์ใดบ้าง (ถ้าไม่มีตอบไม่มี)<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q3" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+          <span class="q-num">4</span><span class="q-label">ลิงก์ช่องทางการสตรีมของคุณ<span class="required-star">*</span></span>
+          <div class="q-sub">ลิงก์ช่องหลักที่คุณจะใช้ไลฟ์สดเกม เช่น https://www.twitch.tv/yourchannel</div>
+          <div class="q-body">
+            <input type="text" id="qStreamLink" placeholder="https://www.twitch.tv/yourchannel">
+          </div>
         </div>
 
-        <!-- Q4 -->
+        <!-- Q5: Audience size -->
         <div class="q">
-          <span class="q-num">4</span><span class="q-label">RDM คืออะไร? ช่วยยกตัวอย่างตามที่คุณเข้าใจ<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q4" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
+          <span class="q-num">5</span><span class="q-label">ยอดผู้ติดตาม และผู้ชมเฉลี่ยต่อการสตรีม<span class="required-star">*</span></span>
+          <div class="q-sub">ระบุคร่าวๆ ได้ เช่น "ผู้ติดตาม 1,200 คน / ผู้ชมเฉลี่ย 30-50 คนต่อสตรีม"</div>
+          <div class="q-body">
+            <input type="text" id="qAudience" placeholder="ผู้ติดตาม ... คน / ผู้ชมเฉลี่ย ... คนต่อสตรีม">
+          </div>
         </div>
 
-        <!-- Q5 -->
+        <!-- Q6: Extra info (optional) -->
         <div class="q">
-          <span class="q-num">5</span><span class="q-label">อธิบายความแตกต่างระหว่างการหลุดคาแรคเตอร์ (breaking character) กับการใช้คำสั่ง /ooc<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q5" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
-        </div>
-
-        <!-- Q6 -->
-        <div class="q">
-          <span class="q-num">6</span><span class="q-label">อธิบายคำว่า "Metagaming" ในแบบของคุณเอง (พร้อมยกตัวอย่างประกอบ 2 ข้อ)<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q6" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
-        </div>
-
-        <!-- Q7 -->
-        <div class="q">
-          <span class="q-num">7</span><span class="q-label">อนุญาตให้มีผู้เข้าร่วมในกิจกรรมการปะทะที่เกิดขึ้นแบบฉับพลันได้จำนวนกี่คนในคราวเดียวกัน (ต่อฝ่าย) และคนอื่นๆในบริเวณต้องทำอย่างไร?<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q7" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea></div>
-        </div>
-
-        <!-- Q8 -->
-        <div class="q">
-          <span class="q-num">8</span><span class="q-label">โปรดอ่านกฎของเซิร์ฟเวอร์และข้อมูลเนื้อเรื่อง (Lore) ให้ครบถ้วนก่อนกรอกข้อมูลด้านล่างนี้ เนื่องจากโลกในเซิร์ฟเวอร์นี้เป็นโลกที่สร้างขึ้นเอง (Homebrew) ขอให้ระบุด้วยว่าตัวละครของคุณมีบทบาทหรือความเกี่ยวข้องอย่างไรกับเนื้อเรื่องของเรา ข้อมูลที่คุณส่งมานี้จะเป็นข้อมูลสำหรับตัวละครชั่วคราว ซึ่งคุณสามารถเลือกเล่นได้หากได้รับการยอมรับ หรือจะเปลี่ยนไปใช้ตัวละครอื่นแทนก็ได้</span>
-          <div class="q-label" style="display:block; margin-top:18px;">พื้นที่เล่นเกมในปัจจุบันคือบริเวณ Wraithwind Clearing ในเขต Frostmarch และ Rivenvale บนทวีป Veloria</div>
-          <div class="q-label" style="display:block; margin-top:18px;">บรรยายลักษณะตัวละครของคุณ<span class="required-star">*</span></div>
-          <div class="q-body"><textarea id="q8" placeholder="พิมพ์คำตอบของคุณที่นี่..." style="min-height:140px;"></textarea></div>
-        </div>
-
-        <!-- Q9 -->
-        <div class="q">
-          <span class="q-num">9</span><span class="q-label">ผู้เล่นคนหนึ่งขโมยดาบและชุดเกราะออกมาจากคลังแสงโดยวางแผนจะปลอมตัวเป็นทหารยาม แต่จู่ๆ เขาก็ถูกกษัตริย์เรียกตัวไปหารือเรื่องการลาดตระเวนประจำวัน ในตอนแรกผู้เล่นยังไม่มีแผนการใดๆ แต่หลังจากได้พูดคุยกับกษัตริย์เพียงครู่เดียว เขากลับตัดสินใจสังหารกษัตริย์เนื่องจากความแค้นในอดีต ท้ายที่สุดผู้เล่นก็ลงมือสังหารกษัตริย์ แต่ก็ถูกทหารรักษาพระองค์จับกุมและประหารชีวิตด้วยการตัดศีรษะในทันที จงอธิบายกฎอย่างน้อย 3 ข้อที่ผู้เล่นคนนี้ละเมิด และระบุว่าเขาสามารถทำสิ่งต่างๆ ให้ดีขึ้นได้อย่างไรบ้าง<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q9" placeholder="พิมพ์คำตอบของคุณที่นี่..." style="min-height:140px;"></textarea></div>
-        </div>
-
-        <!-- Q10 -->
-        <div class="q">
-          <span class="q-num">10</span><span class="q-label">ขณะที่คุณกำลังขี่ม้าผ่านหุบเขาแห่งหนึ่ง คุณได้พบกับอัศวิน 6 นายที่กำลังเจรจาต่อรองกับกลุ่มโจร 4 คน ซึ่งได้ลักพาตัวชายชราที่กำลังป่วยไป โปรดอธิบายโดยละเอียดว่าคุณจะทำอย่างไรและเพราะเหตุใด<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q10" placeholder="พิมพ์คำตอบของคุณที่นี่..." style="min-height:140px;"></textarea></div>
-        </div>
-
-        <!-- Q11 -->
-        <div class="q">
-          <span class="q-num">11</span><span class="q-label">คุณกำลังสวมบทบาทเป็นช่างไม้ประจำเมือง ราชสำนักได้ขอให้คุณซ่อมแซมอาคารต่างๆ ในอาณาจักรหลังจากเกิดไฟไหม้ครั้งล่าสุด คุณได้รับคำสั่งว่าห้ามกลับมาจนกว่าการซ่อมแซมจะเสร็จสิ้น (คุณรู้ว่าในขณะนี้แมคคานิคของเกมยังไม่มีระบบรองรับให้คุณทำเช่นนี้ได้) คุณได้รับตำแหน่งที่จะซ่อมแซมจากผู้รับเหมา แต่เมื่อไปถึง คุณไม่เห็นฉากใดๆ โปรดอธิบายว่าคุณจะทำอย่างไรในฐานะผู้เล่น<span class="required-star">*</span></span>
-          <div class="q-body"><textarea id="q11" placeholder="พิมพ์คำตอบของคุณที่นี่..." style="min-height:140px;"></textarea></div>
+          <span class="q-num">6</span><span class="q-label">ข้อมูลเพิ่มเติม<span class="optional-tag">(ไม่บังคับ)</span></span>
+          <div class="q-sub">เช่น ตารางสตรีมปกติ ประเภทคอนเทนต์ที่วางแผนจะทำในเซิร์ฟเวอร์ หรือคลิปตัวอย่างผลงาน</div>
+          <div class="q-body"><textarea id="qExtra" placeholder="พิมพ์ข้อมูลเพิ่มเติมของคุณที่นี่ (ถ้ามี)..."></textarea></div>
         </div>
 
       </div>
@@ -494,22 +480,22 @@
       <div class="submit-wrap">
         <div class="status-msg" id="statusMsg"></div>
         <button class="submit-btn" id="submitBtn">ส่งใบสมัคร</button>
-        <p class="privacy-note">เมื่อกดส่ง คำตอบของคุณจะถูกจัดเก็บและทีมงานสามารถเข้าดูเพื่อตรวจสอบใบสมัครได้ ผูกกับบัญชี Discord ที่คุณเข้าสู่ระบบ</p>
+        <p class="privacy-note">เมื่อกดส่ง ข้อมูลของคุณจะถูกจัดเก็บและทีมงานสามารถเข้าดูเพื่อตรวจสอบใบสมัครได้ ผูกกับบัญชี Discord ที่คุณเข้าสู่ระบบ</p>
       </div>
     </div>
 
     <div class="success-panel" id="successPanel">
       <div class="stamp">ส่งใบสมัครแล้ว</div>
-      <p>ใบสมัคร Whitelist ของคุณถูกส่งถึงทีมงานเรียบร้อยแล้ว กรุณารอการตรวจสอบ<br>คุณสามารถดาวน์โหลดสำเนาคำตอบเก็บไว้เองได้ด้านล่างนี้</p>
+      <p>ใบสมัคร Whitelist สตรีมเมอร์ของคุณถูกส่งถึงทีมงานเรียบร้อยแล้ว กรุณารอการตรวจสอบ</p>
       <a href="status.html" class="status-link">→ ตรวจสอบสถานะใบสมัครของคุณได้ที่นี่</a>
     </div>
 
     <p style="text-align:center;"><a href="status.html" class="status-link" style="display:inline-block;margin-top:8px;">มีใบสมัครอยู่แล้ว? ตรวจสอบสถานะที่นี่</a></p>
-    <p style="text-align:center;"><a href="streamer-form.html" class="status-link" style="display:inline-block;margin-top:4px;">เป็นสตรีมเมอร์? สมัคร Whitelist สตรีมเมอร์ได้ที่นี่</a></p>
+    <p style="text-align:center;"><a href="whitelist-form.html" class="status-link" style="display:inline-block;margin-top:4px;">ไม่ใช่สตรีมเมอร์? สมัคร Whitelist แบบทั่วไปที่นี่</a></p>
 
   </main>
 
-  <footer id="footerNote">คำตอบของคุณจะถูกส่งให้ทีมงานตรวจสอบ และมีสำเนาไฟล์ .txt ให้ดาวน์โหลดเก็บไว้เองด้วย</footer>
+  <footer id="footerNote">คำตอบของคุณจะถูกส่งให้ทีมงานตรวจสอบผ่านช่องทางเดียวกับใบสมัคร Whitelist ทั่วไป</footer>
 
 <script src="firebase-config.js"></script>
 <script src="firebase-storage.js"></script>
@@ -517,7 +503,7 @@
 (function(){
 
   // ============ DISCORD OAUTH CONFIG ============
-  // TODO: ใส่ Client ID ของแอปที่สร้างใน Discord Developer Portal
+  // ใช้ Client ID เดียวกับหน้าอื่นๆ ทั้งหมด
   const DISCORD_CLIENT_ID = '1534483543462248480';
   const REDIRECT_URI = window.location.origin + window.location.pathname;
   const OAUTH_SCOPE = 'identify';
@@ -532,7 +518,7 @@
   const q2b = document.getElementById('q2b');
 
   let currentUser = null; // { id, username, avatarUrl }
-  let prevRecord = null; // ใบสมัครเดิม (ถ้ามี) — ใช้ตอน pre-fill / ล็อกฟอร์ม
+  let prevRecord = null; // ใบสมัครเดิม (ถ้ามี ไม่ว่าประเภทไหน) — ผูกกับ Discord ID เดียวกัน
 
   function buildLoginUrl(){
     const params = new URLSearchParams({
@@ -559,6 +545,15 @@
     needs_revision: { label: 'ต้องแก้ไขก่อน', color: 'var(--info)' }
   };
 
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  // ทุกประเภทใบสมัคร (ทั่วไป / สตรีมเมอร์) ใช้ Discord ID เดียวกันเป็น
+  // เอกสารเดียวกันใน Firestore (คนละ record ไม่ได้ — สมัครได้ทีละแบบเท่านั้น)
+  // ถ้าพบว่ามีใบสมัคร "ทั่วไป" อยู่ก่อนแล้ว จะล็อกฟอร์มนี้ไว้กันการส่งทับ
   async function checkPreviousApplication(discordId){
     try{
       const res = await window.storage.get('application:' + discordId, true);
@@ -567,53 +562,42 @@
       prevRecord = record;
       const st = STATUS_LABELS[record.status] || STATUS_LABELS.pending;
 
-      if(record.type === 'streamer'){
-        // มีใบสมัครแบบสตรีมเมอร์อยู่แล้ว — ไม่ให้ส่งทับผ่านฟอร์มทั่วไป
+      if(record.type !== 'streamer'){
+        // มีใบสมัครแบบทั่วไปอยู่แล้ว — ไม่ให้ส่งทับผ่านฟอร์มนี้
         prevAppNote.innerHTML =
-          '<div class="prev-app-note" style="background:rgba(255,91,74,0.08); border-color:var(--danger); color:#f1ded9;">คุณมีใบสมัคร Whitelist สตรีมเมอร์อยู่แล้ว (สถานะ: ' +
+          '<div class="prev-app-note warn">คุณมีใบสมัคร Whitelist แบบทั่วไปอยู่แล้ว (สถานะ: ' +
           '<b style="color:' + st.color + '">' + st.label + '</b>) ระบบอนุญาตให้มีใบสมัครได้ทีละ 1 ใบต่อบัญชี Discord' +
-          '<br>หากต้องการแก้ไขใบสมัครเดิม กรุณาไปที่ <a class="helper-link" href="streamer-form.html">หน้าสมัครสตรีมเมอร์</a> แทน' +
+          '<br>หากต้องการแก้ไขใบสมัครเดิม กรุณาไปที่ <a class="helper-link" href="whitelist-form.html">หน้าสมัครทั่วไป</a> แทน' +
           '<br><a class="helper-link" href="status.html">→ ดูรายละเอียดที่หน้าตรวจสอบสถานะ</a></div>';
         formSection.classList.add('locked');
         return;
       }
 
       if(record.status === 'approved'){
-        // ผ่านแล้ว — ไม่ต้องให้แก้ไข/ส่งใหม่ ไม่ pre-fill คำตอบเดิมมาให้แก้
         prevAppNote.innerHTML =
-          '<div class="prev-app-note">ใบสมัครของคุณ <b style="color:' + st.color + '">ผ่านการพิจารณาแล้ว</b> ไม่จำเป็นต้องส่งใบสมัครใหม่อีก' +
+          '<div class="prev-app-note">ใบสมัครสตรีมเมอร์ของคุณ <b style="color:' + st.color + '">ผ่านการพิจารณาแล้ว</b> ไม่จำเป็นต้องส่งใบสมัครใหม่อีก' +
           (record.adminComment ? '<br>หมายเหตุจากทีมงาน: ' + escapeHtml(record.adminComment) : '') +
           '<br><a class="helper-link" href="status.html">→ ดูรายละเอียดที่หน้าตรวจสอบสถานะ</a></div>';
         formSection.classList.add('locked');
         return;
       }
 
-      // pending / needs_revision / rejected — ดึงคำตอบเดิมมา pre-fill ให้แก้ไขต่อได้เลย
+      // pending / needs_revision / rejected ของประเภทสตรีมเมอร์เอง — pre-fill ให้แก้ไขต่อได้
       prevAppNote.innerHTML =
-        '<div class="prev-app-note">พบใบสมัครก่อนหน้าของคุณ — สถานะปัจจุบัน: ' +
+        '<div class="prev-app-note">พบใบสมัครสตรีมเมอร์ก่อนหน้าของคุณ — สถานะปัจจุบัน: ' +
         '<b style="color:' + st.color + '">' + st.label + '</b>' +
         (record.adminComment ? '<br>หมายเหตุจากทีมงาน: ' + escapeHtml(record.adminComment) : '') +
-        '<br>ระบบดึงคำตอบเดิมของคุณมาให้ในฟอร์มด้านล่างแล้ว แก้ไขเฉพาะจุดที่ต้องการแล้วกดส่งใหม่ได้เลย ' +
+        '<br>ระบบดึงข้อมูลเดิมของคุณมาให้ในฟอร์มด้านล่างแล้ว แก้ไขเฉพาะจุดที่ต้องการแล้วกดส่งใหม่ได้เลย ' +
         '(การส่งใหม่จะเขียนทับใบสมัครเดิม และสถานะจะกลับไปเป็น "รอตรวจสอบ" ให้ทีมงานตรวจอีกครั้ง)</div>';
 
       document.getElementById('q2').value = record.steamId || '';
-      document.getElementById('q2c').value = record.streamLink || '';
-      if(record.answers){
-        Object.keys(record.answers).forEach(id=>{
-          const el = document.getElementById(id);
-          if(el) el.value = record.answers[id];
-        });
-      }
+      document.getElementById('qPlatform').value = record.platform || '';
+      document.getElementById('qStreamLink').value = record.streamLink || '';
+      document.getElementById('qAudience').value = record.audienceSize || '';
+      document.getElementById('qExtra').value = record.extraInfo || '';
     }catch(e){
-      // no previous application, ignore
       prevRecord = null;
     }
-  }
-
-  function escapeHtml(str){
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
   }
 
   function setLoggedIn(user){
@@ -639,7 +623,6 @@
   async function init(){
     const token = parseAccessToken();
     if(token){
-      // clean the URL so token doesn't linger in the address bar / history
       history.replaceState(null, '', REDIRECT_URI);
       try{
         const res = await fetch('https://discord.com/api/users/@me', {
@@ -683,60 +666,6 @@
   const submitBtn = document.getElementById('submitBtn');
   const successPanel = document.getElementById('successPanel');
 
-  const textFieldIds = ['q3','q4','q5','q6','q7','q8','q9','q10','q11'];
-
-  const questionLabels = {
-    q3: 'ประสบการณ์การเล่น Roleplay ที่ผ่านมา',
-    q4: 'RDM คืออะไร',
-    q5: 'ความแตกต่างระหว่าง breaking character กับ /ooc',
-    q6: 'อธิบายคำว่า Metagaming',
-    q7: 'จำนวนผู้เข้าร่วมปะทะฉับพลันที่อนุญาต',
-    q8: 'บทบาทตัวละครกับเนื้อเรื่อง / ลักษณะตัวละคร',
-    q9: 'กรณีขโมยของและสังหารกษัตริย์ - กฎที่ละเมิดและควรทำอย่างไรให้ดีขึ้น',
-    q10: 'สถานการณ์อัศวินเจรจากับโจรที่ลักพาตัวชายชรา',
-    q11: 'กรณีรับงานซ่อมแซมแต่ไม่พบฉากในเกม'
-  };
-
-  function buildTxtContent(record){
-    const lines = [];
-    lines.push('=== ใบสมัคร Whitelist - MEDIEVALONLINE ROLEPLAY TH ===');
-    lines.push('วันที่บันทึก: ' + new Date(record.submittedAt).toLocaleString('th-TH'));
-    lines.push('Discord: ' + record.discordUsername + ' (' + record.discordId + ')');
-    lines.push('Steam HEX ID: ' + record.steamId);
-    lines.push('ลิงก์ช่องทางการสตรีม: ' + record.streamLink);
-    lines.push('อายุ 18 ปีขึ้นไป: ใช่');
-    lines.push('');
-    textFieldIds.forEach((id, i)=>{
-      lines.push((i+1) + '. ' + questionLabels[id]);
-      lines.push(record.answers[id]);
-      lines.push('');
-    });
-    lines.push('=== จบใบสมัคร ===');
-    return lines.join('\n');
-  }
-
-  function sanitizeKey(str){
-    return str.trim().replace(/[^a-zA-Z0-9_:-]/g, '_');
-  }
-
-  function offerLocalDownload(record){
-    const content = buildTxtContent(record);
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const filename = 'whitelist_' + sanitizeKey(record.discordId) + '.txt';
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.className = 'submit-btn';
-    a.style.display = 'inline-block';
-    a.style.marginTop = '18px';
-    a.style.background = 'var(--ok)';
-    a.style.textDecoration = 'none';
-    a.textContent = 'ดาวน์โหลดไฟล์ .txt เก็บไว้เอง';
-    successPanel.appendChild(a);
-  }
-
   const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1534591568315547780/eThVo2jnZFzjZ1My8M6a_0rGMhiKz04kFUSgvdXr9Ho3JSDvU590qFGO-6kGOs2gByAI';
 
   function truncateField(str, max){
@@ -745,24 +674,23 @@
   }
 
   async function sendToDiscord(record){
+    const isResubmission = !!record.resubmittedAt;
     const fields = [
       { name: 'Discord', value: truncateField(record.discordUsername + ' (' + record.discordId + ')', 1024), inline: true },
       { name: 'Steam HEX ID', value: truncateField(record.steamId || '-', 1024), inline: true },
-      { name: 'ลิงก์สตรีม', value: truncateField(record.streamLink || '-', 1024), inline: false }
+      { name: 'แพลตฟอร์ม', value: truncateField(record.platform || '-', 1024), inline: true },
+      { name: 'ลิงก์ช่องทางการสตรีม', value: truncateField(record.streamLink || '-', 1024), inline: false },
+      { name: 'ผู้ติดตาม / ผู้ชมเฉลี่ย', value: truncateField(record.audienceSize || '-', 1024), inline: false }
     ];
-    textFieldIds.forEach(id=>{
-      fields.push({
-        name: truncateField(questionLabels[id], 256),
-        value: truncateField((record.answers && record.answers[id]) || '-', 1024)
-      });
-    });
+    if(record.extraInfo){
+      fields.push({ name: 'ข้อมูลเพิ่มเติม', value: truncateField(record.extraInfo, 1024), inline: false });
+    }
 
-    const isResubmission = !!record.resubmittedAt;
     const payload = {
       username: 'Whitelist Bot',
       embeds: [{
-        title: isResubmission ? '🔁 ผู้สมัครแก้ไขและส่งใบสมัครใหม่' : '📥 ใบสมัคร Whitelist ใหม่',
-        color: isResubmission ? 1752220 : 16050456,
+        title: isResubmission ? '🔁 สตรีมเมอร์แก้ไขและส่งใบสมัครใหม่' : '📺 ใบสมัคร Whitelist สตรีมเมอร์ใหม่',
+        color: isResubmission ? 1752220 : 10181046,
         fields: fields,
         timestamp: record.submittedAt
       }]
@@ -787,13 +715,12 @@
       return;
     }
 
-    if(prevRecord && prevRecord.type === 'streamer'){
-      statusMsg.textContent = 'คุณมีใบสมัครสตรีมเมอร์อยู่แล้ว ไม่สามารถส่งใบสมัครทั่วไปทับได้';
+    if(prevRecord && prevRecord.type === 'streamer' && prevRecord.status === 'approved'){
+      statusMsg.textContent = 'ใบสมัครของคุณผ่านการพิจารณาแล้ว ไม่สามารถส่งใบสมัครใหม่ได้';
       return;
     }
-
-    if(prevRecord && prevRecord.status === 'approved'){
-      statusMsg.textContent = 'ใบสมัครของคุณผ่านการพิจารณาแล้ว ไม่สามารถส่งใบสมัครใหม่ได้';
+    if(prevRecord && prevRecord.type !== 'streamer'){
+      statusMsg.textContent = 'คุณมีใบสมัครแบบทั่วไปอยู่แล้ว ไม่สามารถส่งใบสมัครสตรีมเมอร์ทับได้';
       return;
     }
 
@@ -816,39 +743,43 @@
       return;
     }
 
-    const streamLink = document.getElementById('q2c').value.trim();
-    if(!streamLink){
-      statusMsg.textContent = 'กรุณากรอกลิงก์ช่องทางการสตรีมในข้อ 2';
-      document.getElementById('q2c').focus();
+    const platform = document.getElementById('qPlatform').value;
+    if(!platform){
+      statusMsg.textContent = 'กรุณาเลือกแพลตฟอร์มที่ใช้สตรีมในข้อ 3';
+      document.getElementById('qPlatform').focus();
       return;
     }
 
-    for(const id of textFieldIds){
-      const el = document.getElementById(id);
-      if(!el || !el.value.trim()){
-        statusMsg.textContent = 'กรุณากรอกคำตอบให้ครบทุกข้อก่อนส่งใบสมัคร';
-        if(el) el.focus();
-        return;
-      }
+    const streamLink = document.getElementById('qStreamLink').value.trim();
+    if(!streamLink){
+      statusMsg.textContent = 'กรุณากรอกลิงก์ช่องทางการสตรีมในข้อ 4';
+      document.getElementById('qStreamLink').focus();
+      return;
     }
 
-    const values = {};
-    textFieldIds.forEach(id => { values[id] = document.getElementById(id).value.trim(); });
+    const audienceSize = document.getElementById('qAudience').value.trim();
+    if(!audienceSize){
+      statusMsg.textContent = 'กรุณากรอกยอดผู้ติดตาม/ผู้ชมเฉลี่ยในข้อ 5';
+      document.getElementById('qAudience').focus();
+      return;
+    }
+
+    const extraInfo = document.getElementById('qExtra').value.trim();
 
     const record = {
-      type: 'regular',
+      type: 'streamer',
       discordId: currentUser.id,
       discordUsername: currentUser.username,
       steamId,
+      platform,
       streamLink,
-      answers: values,
+      audienceSize,
+      extraInfo,
       submittedAt: new Date().toISOString(),
       status: 'pending'
     };
 
-    // ถ้าเคยสมัครมาก่อน (ต้องแก้ไข / ไม่ผ่าน / รอตรวจสอบ) ให้ทำเครื่องหมายว่าเป็นการ "ส่งแก้ไขใหม่"
-    // และเก็บความเห็นเดิมของทีมงานไว้อ้างอิง เผื่อยังตรวจใบใหม่ไม่เสร็จ
-    if(prevRecord){
+    if(prevRecord && prevRecord.type === 'streamer'){
       record.resubmittedAt = record.submittedAt;
       if(prevRecord.adminComment) record.previousComment = prevRecord.adminComment;
     }
@@ -872,13 +803,12 @@
     document.getElementById('warningWrap').style.display = 'none';
     document.getElementById('authCard').style.display = 'none';
     successPanel.classList.add('show');
-    offerLocalDownload(record);
 
     if(!storageOk){
       const warnP = document.createElement('p');
       warnP.style.color = 'var(--danger)';
       warnP.style.fontSize = '13px';
-      warnP.textContent = 'หมายเหตุ: ไม่สามารถบันทึกใบสมัครลงระบบได้ กรุณาส่งไฟล์ .txt ที่ดาวน์โหลดด้านล่างให้ทีมงานด้วยตนเองผ่าน Discord';
+      warnP.textContent = 'หมายเหตุ: ไม่สามารถบันทึกใบสมัครลงระบบได้ กรุณาติดต่อทีมงานผ่าน Discord โดยตรง';
       successPanel.appendChild(warnP);
     }
   });

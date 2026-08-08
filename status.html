@@ -177,9 +177,17 @@
         <div class="label">Steam HEX ID</div>
         <div class="value" id="valSteam"></div>
       </div>
+      <div class="section" id="platformSection" style="display:none;">
+        <div class="label">แพลตฟอร์ม</div>
+        <div class="value" id="valPlatform"></div>
+      </div>
       <div class="section">
         <div class="label">ลิงก์ช่องทางการสตรีม</div>
         <div class="value" id="valStream"></div>
+      </div>
+      <div class="section" id="audienceSection" style="display:none;">
+        <div class="label">ผู้ติดตาม / ผู้ชมเฉลี่ย</div>
+        <div class="value" id="valAudience"></div>
       </div>
       <div class="section">
         <div class="label">วันที่ส่งใบสมัคร</div>
@@ -189,7 +197,8 @@
 
     <div class="not-found" id="notFound">
       <p>ไม่พบใบสมัครที่ผูกกับบัญชี Discord นี้</p>
-      <p><a href="whitelist-form.html">→ ไปยังแบบฟอร์มสมัคร Whitelist</a></p>
+      <p><a href="whitelist-form.html">→ ไปยังแบบฟอร์มสมัคร Whitelist ทั่วไป</a></p>
+      <p><a href="streamer-form.html">→ ไปยังแบบฟอร์มสมัคร Whitelist สตรีมเมอร์</a></p>
     </div>
 
     <div class="logout-link" id="logoutLink" style="display:none;">ออกจากระบบ / เปลี่ยนบัญชี</div>
@@ -258,7 +267,7 @@
       document.getElementById('discordIdShown').textContent = user.id;
 
       const pill = document.getElementById('statusPill');
-      pill.textContent = st.label;
+      pill.textContent = (record.type === 'streamer' ? '📺 ' : '') + st.label;
       pill.style.color = st.color;
 
       if(record.adminComment){
@@ -269,6 +278,13 @@
       document.getElementById('valSteam').textContent = record.steamId || '-';
       document.getElementById('valStream').textContent = record.streamLink || '-';
       document.getElementById('valSubmitted').textContent = new Date(record.submittedAt).toLocaleString('th-TH');
+
+      if(record.type === 'streamer'){
+        document.getElementById('platformSection').style.display = 'block';
+        document.getElementById('valPlatform').textContent = record.platform || '-';
+        document.getElementById('audienceSection').style.display = 'block';
+        document.getElementById('valAudience').textContent = record.audienceSize || '-';
+      }
 
       resultCard.classList.add('show');
     }catch(e){
