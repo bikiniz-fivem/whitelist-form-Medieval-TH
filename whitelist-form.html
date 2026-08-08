@@ -531,6 +531,7 @@
   const q2b = document.getElementById('q2b');
 
   let currentUser = null; // { id, username, avatarUrl }
+  let prevRecord = null; // ใบสมัครเดิม (ถ้ามี) — ใช้ตอน pre-fill / ล็อกฟอร์ม
 
   function buildLoginUrl(){
     const params = new URLSearchParams({
@@ -560,16 +561,40 @@
   async function checkPreviousApplication(discordId){
     try{
       const res = await window.storage.get('application:' + discordId, true);
-      if(!res) return;
+      if(!res){ prevRecord = null; return; }
       const record = JSON.parse(res.value);
+      prevRecord = record;
       const st = STATUS_LABELS[record.status] || STATUS_LABELS.pending;
+
+      if(record.status === 'approved'){
+        // ผ่านแล้ว — ไม่ต้องให้แก้ไข/ส่งใหม่ ไม่ pre-fill คำตอบเดิมมาให้แก้
+        prevAppNote.innerHTML =
+          '<div class="prev-app-note">ใบสมัครของคุณ <b style="color:' + st.color + '">ผ่านการพิจารณาแล้ว</b> ไม่จำเป็นต้องส่งใบสมัครใหม่อีก' +
+          (record.adminComment ? '<br>หมายเหตุจากทีมงาน: ' + escapeHtml(record.adminComment) : '') +
+          '<br><a class="helper-link" href="status.html">→ ดูรายละเอียดที่หน้าตรวจสอบสถานะ</a></div>';
+        formSection.classList.add('locked');
+        return;
+      }
+
+      // pending / needs_revision / rejected — ดึงคำตอบเดิมมา pre-fill ให้แก้ไขต่อได้เลย
       prevAppNote.innerHTML =
         '<div class="prev-app-note">พบใบสมัครก่อนหน้าของคุณ — สถานะปัจจุบัน: ' +
         '<b style="color:' + st.color + '">' + st.label + '</b>' +
         (record.adminComment ? '<br>หมายเหตุจากทีมงาน: ' + escapeHtml(record.adminComment) : '') +
-        '<br>การส่งฟอร์มใหม่จะเขียนทับใบสมัครเดิม</div>';
+        '<br>ระบบดึงคำตอบเดิมของคุณมาให้ในฟอร์มด้านล่างแล้ว แก้ไขเฉพาะจุดที่ต้องการแล้วกดส่งใหม่ได้เลย ' +
+        '(การส่งใหม่จะเขียนทับใบสมัครเดิม และสถานะจะกลับไปเป็น "รอตรวจสอบ" ให้ทีมงานตรวจอีกครั้ง)</div>';
+
+      document.getElementById('q2').value = record.steamId || '';
+      document.getElementById('q2c').value = record.streamLink || '';
+      if(record.answers){
+        Object.keys(record.answers).forEach(id=>{
+          const el = document.getElementById(id);
+          if(el) el.value = record.answers[id];
+        });
+      }
     }catch(e){
       // no previous application, ignore
+      prevRecord = null;
     }
   }
 
@@ -592,6 +617,7 @@
 
   document.getElementById('logoutLink').addEventListener('click', ()=>{
     currentUser = null;
+    prevRecord = null;
     authLoggedIn.style.display = 'none';
     authLoggedOut.style.display = 'block';
     formSection.classList.add('locked');
@@ -719,11 +745,12 @@
       });
     });
 
+    const isResubmission = !!record.resubmittedAt;
     const payload = {
       username: 'Whitelist Bot',
       embeds: [{
-        title: 'ใบสมัคร Whitelist ใหม่',
-        color: 16050456,
+        title: isResubmission ? '🔁 ผู้สมัครแก้ไขและส่งใบสมัครใหม่' : '📥 ใบสมัคร Whitelist ใหม่',
+        color: isResubmission ? 1752220 : 16050456,
         fields: fields,
         timestamp: record.submittedAt
       }]
@@ -745,6 +772,11 @@
 
     if(!currentUser){
       statusMsg.textContent = 'กรุณาเข้าสู่ระบบด้วย Discord ก่อนกรอกใบสมัคร';
+      return;
+    }
+
+    if(prevRecord && prevRecord.status === 'approved'){
+      statusMsg.textContent = 'ใบสมัครของคุณผ่านการพิจารณาแล้ว ไม่สามารถส่งใบสมัครใหม่ได้';
       return;
     }
 
@@ -795,6 +827,13 @@
       submittedAt: new Date().toISOString(),
       status: 'pending'
     };
+
+    // ถ้าเคยสมัครมาก่อน (ต้องแก้ไข / ไม่ผ่าน / รอตรวจสอบ) ให้ทำเครื่องหมายว่าเป็นการ "ส่งแก้ไขใหม่"
+    // และเก็บความเห็นเดิมของทีมงานไว้อ้างอิง เผื่อยังตรวจใบใหม่ไม่เสร็จ
+    if(prevRecord){
+      record.resubmittedAt = record.submittedAt;
+      if(prevRecord.adminComment) record.previousComment = prevRecord.adminComment;
+    }
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'กำลังส่ง...';

@@ -195,7 +195,10 @@
     q5: 'ความแตกต่างระหว่าง breaking character กับ /ooc',
     q6: 'อธิบายคำว่า Metagaming',
     q7: 'จำนวนผู้เข้าร่วมปะทะฉับพลันที่อนุญาต',
-    q8: 'บทบาทตัวละครกับเนื้อเรื่อง / ลักษณะตัวละคร'
+    q8: 'บทบาทตัวละครกับเนื้อเรื่อง / ลักษณะตัวละคร',
+    q9: 'กรณีขโมยของและสังหารกษัตริย์ - กฎที่ละเมิดและควรทำอย่างไรให้ดีขึ้น',
+    q10: 'สถานการณ์อัศวินเจรจากับโจรที่ลักพาตัวชายชรา',
+    q11: 'กรณีรับงานซ่อมแซมแต่ไม่พบฉากในเกม'
   };
 
   const authWrap = document.getElementById('authWrap');
@@ -208,6 +211,7 @@
   let staffUser = null;
   let allRecords = [];
   let currentFilter = 'all';
+  let openKeys = new Set(); // เก็บ key ของใบสมัครที่เปิดดูอยู่ ไม่ให้ auto-refresh ไปหุบทิ้ง
 
   function escapeHtml(str){
     const d = document.createElement('div');
@@ -260,6 +264,15 @@
                '<div class="value">' + escapeHtml((record.answers && record.answers[id]) || '-') + '</div></div>';
       }).join('');
 
+      // แจ้งเตือนแบบเห็นชัดๆ ว่าใบนี้เป็นการ "แก้ไขแล้วส่งใหม่" จากผู้สมัคร
+      const isResubmission = !!record.resubmittedAt;
+      const resubmitBadge = isResubmission
+        ? '<span class="status-pill" style="color:var(--info); margin-right:8px;">🔁 แก้ไขและส่งใหม่</span>'
+        : '';
+      const previousCommentHtml = record.previousComment
+        ? '<div class="field"><div class="label">ความเห็นเดิม (ก่อนแก้ไขรอบนี้)</div><div class="value">' + escapeHtml(record.previousComment) + '</div></div>'
+        : '';
+
       card.innerHTML =
         '<div class="app-card-head">' +
           '<div class="left">' +
@@ -268,11 +281,13 @@
               '<div class="meta">Steam: ' + escapeHtml(record.steamId) + ' · ' + new Date(record.submittedAt).toLocaleString('th-TH') + '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="status-pill" style="color:' + st.color + '">' + st.label + '</div>' +
+          '<div style="display:flex;align-items:center;">' + resubmitBadge +
+          '<div class="status-pill" style="color:' + st.color + '">' + st.label + '</div></div>' +
         '</div>' +
         '<div class="app-card-body">' +
           '<div class="field"><div class="label">Discord ID</div><div class="value">' + escapeHtml(record.discordId) + '</div></div>' +
           '<div class="field"><div class="label">ลิงก์ช่องทางการสตรีม</div><div class="value">' + escapeHtml(record.streamLink) + '</div></div>' +
+          previousCommentHtml +
           answersHtml +
           '<div class="review-row">' +
             '<select class="status-select">' +
@@ -289,7 +304,12 @@
 
       const head = card.querySelector('.app-card-head');
       const body = card.querySelector('.app-card-body');
-      head.addEventListener('click', ()=> body.classList.toggle('open'));
+      if(openKeys.has(key)) body.classList.add('open');
+      head.addEventListener('click', ()=>{
+        body.classList.toggle('open');
+        if(body.classList.contains('open')) openKeys.add(key);
+        else openKeys.delete(key);
+      });
 
       const saveBtn = card.querySelector('.save-btn');
       const deleteBtn = card.querySelector('.delete-btn');
@@ -304,7 +324,9 @@
           status: newStatus,
           adminComment: newComment,
           reviewedAt: new Date().toISOString(),
-          reviewedBy: staffUser.username
+          reviewedBy: staffUser.username,
+          resubmittedAt: null, // ตรวจแล้ว เลยเอาป้าย "แก้ไขและส่งใหม่" ออก
+          previousComment: null
         });
         try{
           const ok = await window.storage.set(key, JSON.stringify(updated), true);
@@ -313,6 +335,8 @@
           record.status = newStatus;
           record.adminComment = newComment;
           record.reviewedAt = updated.reviewedAt;
+          record.resubmittedAt = null;
+          record.previousComment = null;
           const pill = card.querySelector('.status-pill');
           const s = STATUS_LABELS[newStatus];
           pill.textContent = s.label;
@@ -420,6 +444,9 @@
       panelWrap.style.display = 'block';
       document.getElementById('whoAmI').textContent = 'เข้าสู่ระบบในชื่อ: ' + staffUser.username;
       loadApplications();
+      // โหลดใบสมัครใหม่อัตโนมัติทุก 30 วิ ไม่ต้องรอกด "โหลดใหม่" เอง
+      // (การ์ดที่เปิดดูอยู่จะไม่ถูกหุบ เพราะ openKeys เก็บสถานะไว้ให้)
+      setInterval(loadApplications, 30000);
     }catch(e){
       deniedMsg.textContent = 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่';
       deniedMsg.classList.add('show');
